@@ -1,0 +1,190 @@
+import React, { useState } from 'react';
+import {
+  Box,
+  Divider,
+  Grid,
+  Typography,
+  Paper,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  useTheme,
+  useMediaQuery,
+  Select,
+  MenuItem,
+  IconButton,
+  Card,
+  CardContent
+} from "@mui/material";
+import {
+  Payment as PaymentIcon,
+  Info as InfoIcon,
+  MoreHoriz as MoreHorizIcon,
+  ArrowDropDown as ArrowDropDownIcon,
+  TrendingUp,
+  People,
+  LocalOffer
+} from '@mui/icons-material';
+import StatBox from "../../components/StatBox";
+import SaleHistory from "./saleshistory";
+import PieChartComponent from "../../components/ui/piechart";
+
+const pieChartColors = ["#4e79a7", "#f28e2b", "#76b7b2"];
+
+const LegendItem = ({ color, label }) => (
+  <Box display="flex" alignItems="center" mr={2} mb={1}>
+    <Box
+      sx={{
+        width: 12,
+        height: 12,
+        backgroundColor: color,
+        borderRadius: '2px',
+        mr: 1
+      }}
+    />
+    <Typography variant="body2" sx={{ color: '#000' }}>
+      {label}
+    </Typography>
+  </Box>
+);
+
+const LegendList = () => (
+  <Box display="flex" flexWrap="wrap" justifyContent="center" mt={2}>
+    <LegendItem color={pieChartColors[0]} label="Prospect" />
+    <LegendItem color={pieChartColors[1]} label="Lead" />
+    <LegendItem color={pieChartColors[2]} label="Closed" />
+  </Box>
+);
+
+const Dashboard = () => {
+  const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.down('sm'));
+  const [selectedWeek, setSelectedWeek] = useState(1);
+
+  return (
+    <Box sx={{ p: 3, backgroundColor: '#fff', minHeight: '100vh', color: '#000' }}>
+      {/* Header */}
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h4" sx={{ fontWeight: 700, color: '#000', mb: 1 }}>
+          Sales Forecasting Dashboard
+        </Typography>
+        <Typography variant="body1" sx={{ color: '#000' }}>
+          Real-time sales performance and predictive analytics
+        </Typography>
+      </Box>
+
+      {/* Key Metrics */}
+      <Grid container spacing={3} sx={{ mb: 3 }}>
+        {[...Array(4)].map((_, index) => {
+          const metric = [
+            { title: "TOTAL SALES", value: "ETB 30M", change: "+12%", icon: <PaymentIcon fontSize="small" />, color: '#4e79a7' },
+            { title: "TOTAL CUSTOMERS", value: "1,000", change: "+5%", icon: <People fontSize="small" />, color: '#e15759' },
+            { title: "CLOSED DEALS", value: "150", change: "+8%", icon: <LocalOffer fontSize="small" />, color: '#76b7b2' },
+            { title: "CONVERSION RATE", value: "15%", change: "+2%", icon: <TrendingUp fontSize="small" />, color: '#f28e2b' }
+          ][index];
+
+          return (
+            <Grid item xs={12} sm={6} md={3} key={index}>
+              <Card sx={{
+                height: '100%',
+                borderRadius: 2,
+                boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                border: '1px solid #eee'
+              }}>
+                <CardContent>
+                  <Box display="flex" justifyContent="space-between">
+                    <Box>
+                      <Box display="flex" alignItems="center" sx={{ mb: 1 }}>
+                        {metric.icon}
+                        <Typography variant="body2" sx={{ ml: 1, color: '#000', fontWeight: 500 }}>
+                          {metric.title}
+                        </Typography>
+                      </Box>
+                      <Typography variant="h5" sx={{ fontWeight: 700, color: '#000' }}>
+                        {metric.value}
+                      </Typography>
+                      <Typography variant="body2" sx={{ mt: 0.5, color: metric.change.startsWith('+') ? '#4caf50' : '#f44336' }}>
+                        {metric.change} from last period
+                      </Typography>
+                    </Box>
+                    <Box sx={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: '50%',
+                      backgroundColor: `${metric.color}20`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      {React.cloneElement(metric.icon, { fontSize: "small", sx: { color: metric.color } })}
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          );
+        })}
+      </Grid>
+
+      {/* Charts Row */}
+      <Grid container spacing={3} sx={{ mb: 3 }}>
+        <Grid item xs={12} md={8}>
+          <Paper sx={{ p: 3, height: '100%', borderRadius: 2, backgroundColor: '#fff', color: '#000', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', border: '1px solid #eee' }}>
+            <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+              <Typography variant="h6" sx={{ fontWeight: 600, color: '#000' }}>
+                Sales History & Forecast
+              </Typography>
+              <Box>
+                <Select
+                  value={selectedWeek}
+                  onChange={(e) => setSelectedWeek(e.target.value)}
+                  size="small"
+                  IconComponent={ArrowDropDownIcon}
+                  sx={{ minWidth: 120, color: '#000', '& .MuiSelect-select': { py: 1 }, '& .MuiSelect-icon': { color: '#000' } }}
+                >
+                  <MenuItem value={1}>Last Week</MenuItem>
+                  <MenuItem value={2}>Last Month</MenuItem>
+                  <MenuItem value={3}>Last Quarter</MenuItem>
+                </Select>
+                <IconButton sx={{ ml: 1 }}>
+                  <MoreHorizIcon sx={{ color: '#000' }} />
+                </IconButton>
+              </Box>
+            </Box>
+            <Divider sx={{ mb: 3 }} />
+            <SaleHistory />
+          </Paper>
+        </Grid>
+
+        {/* Customer Segmentation */}
+        <Grid item xs={12} md={4}>
+          <Paper sx={{ p: 3, height: '100%', borderRadius: 2, backgroundColor: '#fff', color: '#000', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', border: '1px solid #eee' }}>
+            <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+              <Typography variant="h6" sx={{ fontWeight: 600, color: '#000' }}>
+                Customer Segmentation
+              </Typography>
+              <IconButton>
+                <MoreHorizIcon sx={{ color: '#000' }} />
+              </IconButton>
+            </Box>
+            <Divider sx={{ mb: 2 }} />
+
+            <Box sx={{ height: 250 }}>
+              <PieChartComponent />
+            </Box>
+
+            {/* Legend below chart */}
+            <LegendList />
+          </Paper>
+        </Grid>
+      </Grid>
+
+      {/* Table section remains same (you can paste your previous table code here) */}
+    </Box>
+  );
+};
+
+export default Dashboard;

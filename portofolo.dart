@@ -6,70 +6,60 @@ class PortfolioSummaryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAFB),
+      backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1,
         title: const Text(
           'Portfolio Summary',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        centerTitle: true,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
+        elevation: 0.5,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Overview',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              'Investment Overview',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 16),
-            _buildSummaryCard(
-              title: 'Total Investment',
-              value: '\$1.2M',
-              icon: Icons.account_balance_wallet,
-              color: Colors.blueAccent,
+            const SizedBox(height: 20),
+            Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              children: [
+                _buildSummaryCard(
+                  icon: Icons.account_balance_wallet_rounded,
+                  title: 'Total Investment',
+                  value: '\$120,000',
+                  color: const Color(0xFF0F9D58),
+                ),
+                _buildSummaryCard(
+                  icon: Icons.trending_up_rounded,
+                  title: 'ROI',
+                  value: '12.4%',
+                  color: const Color(0xFF4285F4),
+                ),
+                _buildSummaryCard(
+                  icon: Icons.bar_chart_rounded,
+                  title: 'Annual Yield',
+                  value: '6.2%',
+                  color: const Color(0xFFFBBC05),
+                ),
+              ],
             ),
-            _buildSummaryCard(
-              title: 'Current Value',
-              value: '\$1.45M',
-              icon: Icons.trending_up,
-              color: Colors.green,
-            ),
-            _buildSummaryCard(
-              title: 'Return Rate',
-              value: '20.8%',
-              icon: Icons.percent,
-              color: Colors.orangeAccent,
-            ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 40),
             const Text(
               'Asset Allocation',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: ListView(
-                children: [
-                  _buildAssetTile('Tech Stocks', '\$450K', 0.37),
-                  _buildAssetTile('Retail', '\$300K', 0.25),
-                  _buildAssetTile('Real Estate', '\$250K', 0.21),
-                  _buildAssetTile('Healthcare', '\$200K', 0.17),
-                ],
-              ),
-            )
+            const SizedBox(height: 20),
+            _buildAssetRow('Stocks', 50, Colors.teal),
+            _buildAssetRow('Bonds', 30, Colors.orange),
+            _buildAssetRow('Real Estate', 15, Colors.indigo),
+            _buildAssetRow('Crypto', 5, Colors.redAccent),
           ],
         ),
       ),
@@ -77,41 +67,60 @@ class PortfolioSummaryPage extends StatelessWidget {
   }
 
   Widget _buildSummaryCard({
+    required IconData icon,
     required String title,
     required String value,
-    required IconData icon,
     required Color color,
   }) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: color.withOpacity(0.15),
-          child: Icon(icon, color: color),
-        ),
-        title: Text(title,
-            style: const TextStyle(fontWeight: FontWeight.bold)),
-        trailing: Text(value,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+    return Container(
+      width: 250,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6)],
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            backgroundColor: color.withOpacity(0.1),
+            child: Icon(icon, color: color),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                Text(title, style: const TextStyle(color: Colors.grey)),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildAssetTile(String name, String value, double percentage) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ListTile(
-        title: Text(name),
-        subtitle: LinearProgressIndicator(
-          value: percentage,
-          color: Colors.teal,
-          backgroundColor: Colors.teal.withOpacity(0.2),
-        ),
-        trailing: Text(value,
-            style: const TextStyle(fontWeight: FontWeight.bold)),
+  Widget _buildAssetRow(String asset, int percentage, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '$asset - $percentage%',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 8),
+          LinearProgressIndicator(
+            value: percentage / 100,
+            backgroundColor: color.withOpacity(0.2),
+            color: color,
+            minHeight: 10,
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ],
       ),
     );
   }
